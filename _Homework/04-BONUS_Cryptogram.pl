@@ -54,3 +54,32 @@
 % % True if words EWords decrypt to DWords (all of which
 % % are in the dictionary) using the keys K1 and K2.
 % decrypt_all(EWords, Dictionary, DWords, K1, K2) :- ...
+
+
+decrypt_word("", "", _, _).             % base case
+decrypt_word([], [], _, _).             % base case
+decrypt_word(E, D, K1, _) :-            % decrypting the last letter, or the only one letter
+    string_codes(E, [E1 | [] ]), 
+    string_codes(D, [D1 | [] ]),
+    between(0, 26, K1),                 % K1 is between 0 and 26, it can be higher or lower, but it will be the same modulo 26, since we do not need the exact value, this is ok.
+    D1 is (E1 - K1 - 97) mod 26 + 97.
+decrypt_word(E, D, K1, K2) :-           % decrypting the first two letters and then recursively decrypting the rest
+    string_codes(E, [E1, E2 | ECodes]),
+    string_codes(D, [D1, D2 | DCodes]),
+    between(0, 26, K1),
+    between(0, 26, K2),
+    D1 is (E1 - K1 - 97) mod 26 + 97,
+    D2 is (E2 - K2 - 97) mod 26 + 97,
+    decrypt_word(ECodes, DCodes, K1, K2).
+
+decrypt_all([], _, [], _, _).           % base case
+decrypt_all([EWord | EWords], Dictionary, [DWord | DWords], K1, K2) :-  % decrypting the first word and then recursively decrypting the rest
+    member(DWord, Dictionary),
+    decrypt_word(EWord, DWord, K1, K2),
+    decrypt_all(EWords, Dictionary, DWords, K1, K2).
+
+decrypt(C, D, M) :-                     % split the string into words and decrypt them
+    split_string(C, " ", " ", CWords),
+    decrypt_all(CWords, D, MWords, _, _),
+    atomics_to_string(MWords, " ", M).
+
