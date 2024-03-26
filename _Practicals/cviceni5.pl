@@ -131,5 +131,36 @@ vars(F, Vars) :-
     vars(R, VarsR),    
     merge(VarsL, VarsR, Vars).
 
-genModel(Vars, Model) :- 
-    member(Vars, [true, false])
+genModel([], []).
+genModel([ Var | Vars ], [Var = V|Model]) :-
+    member(V, [true, false]),
+    genModel(Vars, Model).
+
+non_(true, false).
+non_(false, true).
+
+table([A, _, _, _], true, true, A).
+table([_, B, _, _], true, false, B).
+table([_, _, C, _], false, true, C).
+table([_, _, _, D], false, false, D).
+
+getTable(ekv, [true, false, false, true]).
+getTable(imp, [true, false, true, true]).
+getTable(or, [true, true, true, false]).
+getTable(and, [true, false, false, false]).
+
+% eval(X ekv Y, [X=Xm, Y=Ym], Value) :-
+%     Xm == Ym,
+%     Value = true,!.
+% eval(X ekv Y, [X=Xm, Y=Ym], false).
+
+eval(V, Model, Res) :- atom(V), member(V=Res, Model).
+eval(non F, Model, R2) :- eval(F, Model, R1), non_(R1, R2).
+eval(F, Model, Value) :-
+    F =.. [Op, L, R],
+    getTable(Op, Table),
+    eval(L, Model, Res1),
+    eval(R, Model, Res2),
+    table(Table, Res1, Res2, Res).
+    
+
