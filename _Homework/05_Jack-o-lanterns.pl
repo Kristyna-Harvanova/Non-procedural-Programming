@@ -112,3 +112,27 @@ flip3(S, T) :-
     flip(B, NewB),
     flip(C, NewC),
     append([[NewB, NewC], Rest, [NewA]], S).% Constructing the new list with the 3 flipped elements.
+
+% Defining the genEnd(+N, -End) help function. (Not used in the final implementation)
+genEnd(1, [out]).
+genEnd(N, [out|Rest]) :-
+    N1 is N-1, N1 > 0,
+    genEnd(N1, Rest).
+
+% Defining the end(+State) function
+end([out]).
+end([State|Rest]) :-    % All of the elements must be out.
+    State = out,    
+    end(Rest).  
+
+% Defining the bfs(+Queue, +Visited, -Path) function
+bfs([[State|Prev] | _], _, [State|Prev]) :- end(State), !.  % If the end state is reached, return the path.
+bfs([[State|Prev] | Queue], Visited, Result) :-
+    findall([NewState, State|Prev], (flip3(State, NewState), \+ member(NewState, Visited)), NewPaths),  % Generate all possible paths.
+    append(Queue, NewPaths, NewQueue),  % Append the new paths to the queue.
+    bfs(NewQueue, [State|Visited], Result). % Continue the search.
+
+% Defining the pumpkin(+Initial, -Path) function
+pumpkin(Initial, Path) :-
+    bfs([[Initial]], [], PathRev),
+    reverse(PathRev, Path).     % Reversing the path to get the correct order.
