@@ -113,26 +113,48 @@ flip3(S, T) :-
     flip(C, NewC),
     append([[NewB, NewC], Rest, [NewA]], S).% Constructing the new list with the 3 flipped elements.
 
-% Defining the genEnd(+N, -End) help function. (Not used in the final implementation)
+% Defining the genEnd(+N, -End) help function. 
 genEnd(1, [out]).
 genEnd(N, [out|Rest]) :-
     N1 is N-1, N1 > 0,
     genEnd(N1, Rest).
 
-% Defining the end(+State) function
+% Defining the end(+State) function (Not used in the final implementation)
 end([out]).
 end([State|Rest]) :-    % All of the elements must be out.
     State = out,    
     end(Rest).  
 
 % Defining the bfs(+Queue, +Visited, -Path) function
-bfs([[State|Prev] | _], _, [State|Prev]) :- end(State), !.  % If the end state is reached, return the path.
-bfs([[State|Prev] | Queue], Visited, Result) :-
+bfs([[State|Prev] | _], _, [State|Prev], End) :- State == End, !.  % If the end state is reached, return the path.
+bfs([[State|Prev] | Queue], Visited, Result, End) :-
     findall([NewState, State|Prev], (flip3(State, NewState), \+ member(NewState, Visited)), NewPaths),  % Generate all possible paths.
     append(Queue, NewPaths, NewQueue),  % Append the new paths to the queue.
-    bfs(NewQueue, [State|Visited], Result). % Continue the search.
+    bfs(NewQueue, [State|Visited], Result, End). % Continue the search.
 
 % Defining the pumpkin(+Initial, -Path) function
 pumpkin(Initial, Path) :-
-    bfs([[Initial]], [], PathRev),
+    length(Initial, N),     % Getting the length of the initial list.
+    genEnd(N, End),         % Generating the end state.
+    bfs([[Initial]], [], PathRev, End),
     reverse(PathRev, Path).     % Reversing the path to get the correct order.
+
+% % Enhanced BFS to ensure no state is queued more than once.
+% bfs([[State|Prev] | RestQueue], Visited, Path) :-
+%     (   end(State)
+%     ->  reverse([State|Prev], Path)  % Found a solution, reverse the path to the correct order.
+%     ;   findall(
+%             [NewState, State|Prev],
+%             (   flip3(State, NewState),
+%                 \+ memberchk(NewState, Visited)  % Only consider NewState if not in Visited.
+%             ),
+%             NewPaths),
+%         append(Visited, [State], NewVisited),  % Add current state to Visited.
+%         append(RestQueue, NewPaths, NewQueue),  % Enqueue new states.
+%         bfs(NewQueue, NewVisited, Path)  % Recursive call with updated queue and visited list.
+%     ).
+
+% % Modified pumpkin/2 predicate to initiate BFS with an empty visited list.
+% pumpkin(Initial, Path) :-
+%     bfs([[Initial]], [Initial], Path).  % Start BFS with Initial state already marked as visited.
+%     %reverse(PathRev, Path).
