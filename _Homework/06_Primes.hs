@@ -21,18 +21,40 @@
 
 
 -- a)
+
+-- Find the smallest divisor that is prime.
 findPrime :: Int -> Int
 findPrime x = head [p | p <- [2..x], (mod x p) == 0]
 
+-- Compute a list of prime factors of an integer x ≥ 2, in ascending order
 factors :: Int -> [Int]
 factors x = 
     if x <= 1 then [] 
     else let p = findPrime x in p : factors (div x p)
 
 -- b)
-findPQ :: Int -> (Int, Int)
-findPQ x = 
 
+-- Sieve of Eratosthenes algorithm
+sieve :: [Int] -> [Int]
+sieve [] = []
+sieve (p:xs) = p : sieve [x | x <- xs, (mod x p) /= 0]
+
+-- Find all primes up to an integer x
+findPrimes :: Int -> [Int]
+findPrimes x = sieve [2..x]
+
+-- Pair the consecutive elements in a list
+consecutivePrimesPairs :: [Int] -> [(Int, Int)]
+consecutivePrimesPairs primes = zip primes (tail primes)
+
+-- Find the pairs of consecutive primes, where each prime is less or equal to x
+primePairs :: Int -> [(Int, Int)]
+primePairs x = consecutivePrimesPairs (findPrimes x)
+
+-- Compute the largest prime gap in the range 2..x
 gap :: Int -> (Int, Int)
-gap x = [(p, q)| q <-]
-
+gap x = let pairs = primePairs x
+            maxPair = foldl (\(maxP, maxQ) (p, q) -> 
+              if q-p > maxQ-maxP then (p, q) 
+              else (maxP, maxQ)) (0,0) pairs
+        in maxPair
