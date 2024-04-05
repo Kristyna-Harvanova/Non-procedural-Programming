@@ -61,7 +61,7 @@ factorsHelper :: Int -> Int -> [Int]
 factorsHelper 1 p = []
 factorsHelper x p =
     if x < p*p then [x]   -- If no more factors, return x
-    else if x `mod` p == 0 then [p] : factorsHelper (x `div` p) p  -- If p is a factor, include it and continue with x/p
+    else if x `mod` p == 0 then p : factorsHelper (x `div` p) p  -- If p is a factor, include it and continue with x/p
     else factorsHelper x (if p == 2 then 3 else p + 2)  -- Increment p correctly for potential divisors
 
 factors :: Int -> [Int]
