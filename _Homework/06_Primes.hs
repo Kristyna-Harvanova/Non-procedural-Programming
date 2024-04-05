@@ -26,21 +26,33 @@
 -- findPrime :: Int -> Int
 -- findPrime x = head [p | p <- [2..x], (mod x p) == 0]
 
--- -- Find the smallest divisor that is prime.
-findPrimeHelper :: Int -> Int -> Int
-findPrimeHelper x currentDivisor = 
-    if (x `mod` currentDivisor) == 0 then currentDivisor
-    else findPrimeHelper x (currentDivisor + 1)
+-- -- -- Find the smallest divisor that is prime.
+-- findPrimeHelper :: Int -> Int -> Int
+-- findPrimeHelper x currentDivisor = 
+--     if (x `mod` currentDivisor) == 0 then currentDivisor
+--     else findPrimeHelper x (currentDivisor + 1)
 
-findPrime :: Int -> Int
-findPrime x = findPrimeHelper x 2
+-- findPrime :: Int -> Int
+-- findPrime x = findPrimeHelper x 2
     
--- Compute a list of prime factors of an integer x ≥ 2, in ascending order
+-- -- Compute a list of prime factors of an integer x ≥ 2, in ascending order
+-- factors :: Int -> [Int]
+-- factors x = 
+--     if x <= 1 then [] 
+--     else let p = findPrime x in p : factors (div x p)
+    
+factorsHelper :: Int -> Int -> Int -> [Int]
+factorsHelper n 1 p = []
+factorsHelper n x 2 = 
+    if x `mod` 2 == 0 then 2 : factorsHelper n (x `div` 2) 2
+    else factorsHelper n x 3
+factorsHelper n x p =
+    if x `mod` p == 0 then p : factorsHelper n (x `div` p) p
+    else factorsHelper n x (p + (x `mod` p))
+
 factors :: Int -> [Int]
-factors x = 
-    if x <= 1 then [] 
-    else let p = findPrime x in p : factors (div x p)
-  
+factors x = factorsHelper x x 2
+
 
 -- b)
 
