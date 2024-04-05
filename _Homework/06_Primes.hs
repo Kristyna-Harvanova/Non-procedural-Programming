@@ -41,17 +41,34 @@
 --     if x <= 1 then [] 
 --     else let p = findPrime x in p : factors (div x p)
     
-factorsHelper :: Int -> Int -> Int -> [Int]
-factorsHelper n 1 p = []
-factorsHelper n x 2 = 
-    if x `mod` 2 == 0 then 2 : factorsHelper n (x `div` 2) 2
-    else factorsHelper n x 3
-factorsHelper n x p =
-    if x `mod` p == 0 then p : factorsHelper n (x `div` p) p
-    else factorsHelper n x (p + 2)
+
+
+
+-- factorsHelper :: Int -> Int -> Int -> [Int]
+-- factorsHelper n 1 p = []
+-- factorsHelper n x 2 = 
+--     if x `mod` 2 == 0 then 2 : factorsHelper n (x `div` 2) 2
+--     else factorsHelper n x 3
+-- factorsHelper n x p =
+--     if x `mod` p == 0 then p : factorsHelper n (x `div` p) p
+--     else factorsHelper n x (p + (x `mod` p))
+
+-- factors :: Int -> [Int]
+-- factors x = factorsHelper x x 2
+
+
+factorsHelper :: Int -> Int -> [Int]
+factorsHelper 1 p = []
+factorsHelper x p =
+    if x < p*p then [x]   -- If no more factors, return x
+    else if x `mod` p == 0 then [p] : factorsHelper (x `div` p) p  -- If p is a factor, include it and continue with x/p
+    else factorsHelper x (if p == 2 then 3 else p + 2)  -- Increment p correctly for potential divisors
 
 factors :: Int -> [Int]
-factors x = factorsHelper x x 2
+factors x = factorsHelper x 2
+
+
+
 
 
 -- b)
