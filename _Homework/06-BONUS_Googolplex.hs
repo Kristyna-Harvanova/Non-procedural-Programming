@@ -18,14 +18,11 @@
 -- 0
 
 
-dec2BinHelper :: Integer -> [Int]
-dec2BinHelper 0 = [0]
-dec2BinHelper 1 = [1]
-dec2BinHelper n = fromIntegral (n `mod` 2) : dec2BinHelper (n `div` 2)
-
 -- Return list of 0 and 1 from LSB to MSB
 decimal2Binary :: Integer -> [Int]
-decimal2Binary n = dec2BinHelper n
+decimal2Binary 0 = [0]
+decimal2Binary 1 = [1]
+decimal2Binary n = fromIntegral (n `mod` 2) : decimal2Binary (n `div` 2)
 
 -- Recursive function for modular exponentiation using binary digits of exponent
 modExpBinary :: Integer -> Integer -> [Int] -> Integer
