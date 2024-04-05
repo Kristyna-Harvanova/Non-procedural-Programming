@@ -42,21 +42,6 @@
 --     else let p = findPrime x in p : factors (div x p)
     
 
-
-
--- factorsHelper :: Int -> Int -> Int -> [Int]
--- factorsHelper n 1 p = []
--- factorsHelper n x 2 = 
---     if x `mod` 2 == 0 then 2 : factorsHelper n (x `div` 2) 2
---     else factorsHelper n x 3
--- factorsHelper n x p =
---     if x `mod` p == 0 then p : factorsHelper n (x `div` p) p
---     else factorsHelper n x (p + (x `mod` p))
-
--- factors :: Int -> [Int]
--- factors x = factorsHelper x x 2
-
-
 factorsHelper :: Int -> Int -> [Int]
 factorsHelper 1 p = []
 factorsHelper x p =
@@ -64,23 +49,29 @@ factorsHelper x p =
     else if x `mod` p == 0 then p : factorsHelper (x `div` p) p  -- If p is a factor, include it and continue with x/p
     else factorsHelper x (if p == 2 then 3 else p + 2)  -- Increment p correctly for potential divisors
 
+-- Compute a list of prime factors of an integer x ≥ 2, in ascending order
 factors :: Int -> [Int]
 factors x = factorsHelper x 2
 
 
-
-
-
 -- b)
 
--- Sieve of Eratosthenes algorithm
-sieve :: [Int] -> [Int]
-sieve [] = []
-sieve (p:xs) = p : sieve [x | x <- xs, (mod x p) /= 0]
+-- -- Sieve of Eratosthenes algorithm
+-- sieve :: [Int] -> [Int]
+-- sieve [] = []
+-- sieve (p:xs) = p : sieve [x | x <- xs, (mod x p) /= 0]
+
+-- -- Find all primes up to an integer x
+-- findPrimes :: Int -> [Int]
+-- findPrimes x = sieve [2..x]
+
+-- Helper to check if a number is prime by its factors
+isPrime :: Int -> Bool
+isPrime x = factors x == [x]
 
 -- Find all primes up to an integer x
 findPrimes :: Int -> [Int]
-findPrimes x = sieve [2..x]
+findPrimes x = filter isPrime [2..x]
 
 -- Pair the consecutive elements in a list
 consecutivePrimesPairs :: [Int] -> [(Int, Int)]
