@@ -22,15 +22,25 @@
 
 -- a)
 
--- Find the smallest divisor that is prime.
-findPrime :: Int -> Int
-findPrime x = head [p | p <- [2..x], (mod x p) == 0]
+-- -- Find the smallest divisor that is prime.
+-- findPrime :: Int -> Int
+-- findPrime x = head [p | p <- [2..x], (mod x p) == 0]
 
+-- -- Find the smallest divisor that is prime.
+findPrimeHelper :: Int -> Int -> Int
+findPrimeHelper x currentDivisor = 
+    if (x `mod` currentDivisor) == 0 then currentDivisor
+    else findPrimeHelper x (currentDivisor + 1)
+
+findPrime :: Int -> Int
+findPrime x = findPrimeHelper x 2
+    
 -- Compute a list of prime factors of an integer x ≥ 2, in ascending order
 factors :: Int -> [Int]
 factors x = 
     if x <= 1 then [] 
     else let p = findPrime x in p : factors (div x p)
+  
 
 -- b)
 
