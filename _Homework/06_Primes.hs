@@ -48,7 +48,7 @@ factorsHelper n x 2 =
     else factorsHelper n x 3
 factorsHelper n x p =
     if x `mod` p == 0 then p : factorsHelper n (x `div` p) p
-    else factorsHelper n x (p + (x `mod` p))
+    else factorsHelper n x (p + 2)
 
 factors :: Int -> [Int]
 factors x = factorsHelper x x 2
