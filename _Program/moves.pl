@@ -1,4 +1,8 @@
 
+:- module(moves, [up/2, front/2, right/2, back/2, left/2, down/2]).
+
+:- use_module(cube).
+
 %%% Defining the moves of Rubik's cube. %%%
 
 % Move up face clockwise up(+Cube, -NewCube), anti-clockwise up(-NewCube, +Cube)
