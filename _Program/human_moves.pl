@@ -1,8 +1,9 @@
 
-:- module(human_moves, [successors4middle/3, successors4yellow/3, successors4yellow2/3, successors4yellow3/3]).
+% :- module(human_moves, [successors4middle/3, successors4yellow/3, successors4yellow2/3, successors4yellow3/3]).
 
-:- use_module(cube).
-:- use_module(moves).
+% :- use_module(cube).
+% :- use_module(moves).
+%:- include('moves.pl').
 
 
 % % r, u', r', u', f', u, f

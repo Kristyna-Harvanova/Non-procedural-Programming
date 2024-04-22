@@ -1,20 +1,8 @@
 
-:- module(examples, [solved/1, in1/1, in2/1, in3/1, in4/1, in5/1, in6/1, in7/1, in8/1, in9/1, inRand1/1, inRand2/1]).
-
-:- use_module(cube).
-
 %%% Defining some examples of Rubik's cube. %%%
 
 % Defining the solved state of Rubik's cube. (The faces are in order: up, left, front, right, back, down)
-% const(solved, cube(
-%     w, w, w, w, w, w, w, w, w,
-%     g, g, g, g, g, g, g, g, g,
-%     r, r, r, r, r, r, r, r, r,
-%     b, b, b, b, b, b, b, b, b,
-%     o, o, o, o, o, o, o, o, o,
-%     y, y, y, y, y, y, y, y, y)).
-
-solved(cube(
+const(solved, cube(
     w, w, w, w, w, w, w, w, w,
     g, g, g, g, g, g, g, g, g,
     r, r, r, r, r, r, r, r, r,
@@ -22,20 +10,11 @@ solved(cube(
     o, o, o, o, o, o, o, o, o,
     y, y, y, y, y, y, y, y, y)).
 
-
 % Defining some of the initial states of Rubik's cube. (The faces are in order: up, left, front, right, back, down)
 
 % From the solved:  right'. (1 move) 
 % Result moves:     [Right]
-% const(in1, cube(
-%     w, w, o, w, w, o, w, w, o,
-%     g, g, g, g, g, g, g, g, g,
-%     r, r, w, r, r, w, r, r, w,
-%     b, b, b, b, b, b, b, b, b,
-%     y, o, o, y, o, o, y, o, o,
-%     y, y, r, y, y, r, y, y, r)).
-
-in1(cube(
+const(in1, cube(
     w, w, o, w, w, o, w, w, o,
     g, g, g, g, g, g, g, g, g,
     r, r, w, r, r, w, r, r, w,
@@ -45,15 +24,7 @@ in1(cube(
 
 % From the solved:  right, up. (2 moves)
 % Result moves:     [Up',Right']
-% const(in2, cube(
-%     w, w, w, w, w, w, r, r, r,
-%     r, r, y, g, g, g, g, g, g,
-%     b, b, b, r, r, y, r, r, y,
-%     w, o, o, b, b, b, b, b, b,
-%     g, g, g, w, o, o, w, o, o,
-%     y, y, o, y, y, o, y, y, o)).
-
-in2(cube(
+const(in2, cube(
     w, w, w, w, w, w, r, r, r,
     r, r, y, g, g, g, g, g, g,
     b, b, b, r, r, y, r, r, y,
@@ -63,15 +34,7 @@ in2(cube(
 
 % From the solved:  front, down, left'. (3 moves)
 % Result moves:     [Left,Down',Front']
-% const(in3, cube(
-%     r, w, w, r, w, w, g, g, g,
-%     y, y, o, g, g, o, g, g, o, 
-%     y, r, r, y, r, r, y, g, y,
-%     w, b, b, w, b, b, r, r, r,
-%     o, o, g, o, o, w, w, b, w, 
-%     b, y, b, o, y, b, o, y, b)).
-
-in3(cube(
+const(in3, cube(
     r, w, w, r, w, w, g, g, g,
     y, y, o, g, g, o, g, g, o, 
     y, r, r, y, r, r, y, g, y,

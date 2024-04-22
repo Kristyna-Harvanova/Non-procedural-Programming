@@ -1,6 +1,4 @@
 
-:- module(cube, [cube/54]).
-
 %%% Defining the Rubik's cube. %%%
 
 % Defining the colours of Rubik's cube.

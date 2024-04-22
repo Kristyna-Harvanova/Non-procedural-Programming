@@ -1,11 +1,7 @@
 
-% :- include('moves.pl').
-% :- include('examples.pl').
-
-:- module(id, [solve/1, find_moves_from_to/2, measure_time/3, iterative_deepening/4]).
-
-:- use_module(cube).
-:- use_module(moves).
+:- include('cube.pl').
+:- include('moves_basic.pl').
+:- include('examples.pl').
 
 %%% Iterative deepening approach to solve the Rubik's cube. %%%
 
@@ -61,10 +57,10 @@ iterative_deepening(MovePred, Start, Goal, Solution) :-
 
 % Solve the cube
 solve(InitialName) :-
+    const(InitialName, Initial),    % Get the initial state by its const name defined in examples.pl
+    const(solved, Solved),          % Get the solved state (also defined in examples.pl)
     writeln('Starting iterative deepening search...'),
-    const(InitialName, Initial),    % Get the initial state by its const name defined in cube.pl
-    const(solved, Solved),          % Get the solved state (also defined in cube.pl)
-    iterative_deepening(successors, Initial, Solved, Solution, _), 
+    iterative_deepening(successors, Initial, Solved, Solution), 
     write("For the initial state: "), writeln(Initial),
     write("Solution found: "), writeln(Solution).
 
