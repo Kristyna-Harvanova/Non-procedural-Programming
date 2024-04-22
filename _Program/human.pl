@@ -1,163 +1,127 @@
 
 :- include('id.pl').
-:- include('human_moves.pl').
+:- include('moves_compound.pl').
 :- include('human_moves2.pl').
-%:- include('examples.pl').
-%:- include('human_moves.pl').
-
-% :- module(human, [solve_white_cross/1]).
-
-% :- use_module(cube).
-% % :- use_module(examples).
-% :- use_module(moves).
-% :- use_module(id).
-% :- use_module(human_moves).
-% :- include('human_moves.pl').
-
-
 % TODO: popsat, ze umi vygenerovat ruzna reseni - proto neni ukonceno rezem.
-% TODO: prejmenovat veci zde v human approach
+
 
 %%% Human approach to solve the Rubik's cube. %%%
 
-% solve_step_name(InitialName, FinalName, Final) :-
-%     const(InitialName, Initial),    % Get the initial state by its const name defined in cube.pl
-%     const(FinalName, Final),        % Get the final state by its const name defined in cube.pl
-%     iterative_deepening(successors, Initial, Final, Solution), 
+% Define other successor functions for different parts of algorithm solving the cube.
+
+successors4middle(Cube, NewCube, Moves) :-
+    (move2middle1a(Cube, NewCube, Moves)) ;
+    (move2middle1b(Cube, NewCube, Moves)) ;
+    (move2middle2a(Cube, NewCube, Moves)) ;
+    (move2middle2b(Cube, NewCube, Moves)) ;
+    (move2middle3a(Cube, NewCube, Moves)) ;
+    (move2middle3b(Cube, NewCube, Moves)) ;
+    (move2middle4a(Cube, NewCube, Moves)) ;
+    (move2middle4b(Cube, NewCube, Moves)) ;
+    (down(Cube, NewCube), Moves = ["Down"]) ;
+    (down(NewCube, Cube), Moves = ["Down'"]).
+
+successors4yellow(MainMove, Cube, NewCube, Moves) :-
+    (call(MainMove, Cube, NewCube, Moves)) ;
+    (down(Cube, NewCube), Moves = ["Down"]) ;
+    (down(NewCube, Cube), Moves = ["Down'"]).
+
+successors4yellow1(Cube, NewCube, Moves) :-
+    successors4yellow(move2yellow1, Cube, NewCube, Moves).
+
+successors4yellow2(Cube, NewCube, Moves) :-
+    successors4yellow(move2yellow2, Cube, NewCube, Moves).
+
+successors4yellow3(Cube, NewCube, Moves) :-
+    successors4yellow(move2yellow3, Cube, NewCube, Moves).
+
+
+% Define the main function to solve the cube in steps.
+% solve_step(MovePred, Initial, Final) :-
+%     iterative_deepening(MovePred, Initial, Final, Solution).
 %     %write("For the initial state: "), writeln(Initial),
 %     %write("For the final state: "), writeln(Final),
-%     write("Solution found: "), writeln(Solution).
+%     %write("Solution found: "), writeln(Solution).
 
-solve_step(Initial, FinalName, Final) :-
-    const(FinalName, Final),        % Get the final state by its const name defined in cube.pl
-    iterative_deepening(successors, Initial, Final, Solution), 
+solve_step(MovePred, Initial, Final, Solution) :-
+    iterative_deepening(MovePred, Initial, Final, Solution).
     %write("For the initial state: "), writeln(Initial),
     %write("For the final state: "), writeln(Final),
-    write("Solution found: "), writeln(Solution).
-
-solve_step2(Initial, Final) :-
-    iterative_deepening(successors, Initial, Final, Solution), 
-    %write("For the initial state: "), writeln(Initial),
-    %write("For the final state: "), writeln(Final),
-    write("Solution found: "), writeln(Solution).
-
-solve_yellow(MovePred, Initial, FinalName, Final) :-
-    const(FinalName, Final),        % Get the final state by its const name defined in cube.pl
-    iterative_deepening(MovePred, Initial, Final, Solution), 
-    %write("For the initial state: "), writeln(Initial),
-    %write("For the final state: "), writeln(Final),
-    write("Solution found: "), writeln(Solution).
-
-solve_yellow2(MovePred, Initial, Final) :-
-    iterative_deepening(MovePred, Initial, Final, Solution), 
-    %write("For the initial state: "), writeln(Initial),
-    %write("For the final state: "), writeln(Final),
-    write("Solution found: "), writeln(Solution).
+    %write("Solution found: "), writeln(Solution).
 
 
+% Define the functions to solve the cube in main stages.
 
-
-solve_white_cross(Initial, Final) :-
+solve_white_cross(Initial, Final, Solution) :-
     white_cross_1(State1),
     white_cross_2(Final),
+    solve_step(successors, Initial, State1, Solution1),
+    solve_step(successors, State1, Final, Solution2),
+    append(Solution1, Solution2, Solution).
 
-    solve_step2(Initial, State1),
-    solve_step2(State1, Final).
-
-solve_white_corners(Initial, Final) :-
+solve_white_corners(Initial, Final, Solution) :-
     white_corners_1(State1),
     white_corners_2(State2),
     white_corners_3(State3),
     white_corners_4(Final),
+    solve_step(successors, Initial, State1, Solution1),
+    solve_step(successors, State1, State2, Solution2),
+    solve_step(successors, State2, State3, Solution3),
+    solve_step(successors, State3, Final, Solution4),
+    append(Solution1, Solution2, Temp1),
+    append(Temp1, Solution3, Temp2),
+    append(Temp2, Solution4, Solution).
 
-    solve_step2(Initial, State1),
-    solve_step2(State1, State2),
-    solve_step2(State2, State3),
-    solve_step2(State3, Final).
-
-solve_middle_layer(Initial, Final) :-
+solve_middle_layer(Initial, Final, Solution) :-
     middle_layer_2b(State1),
     middle_layer_4b(Final),
+    solve_step(successors4middle, Initial, State1, Solution1),
+    solve_step(successors4middle, State1, Final, Solution2),
+    append(Solution1, Solution2, Solution).
 
-    solve_yellow2(successors4middle, Initial, State1),
-    solve_yellow2(successors4middle, State1, Final).
-
-solve_yellow_cross(Initial, Final) :-
+solve_yellow_cross(Initial, Final, Solution) :-
     yellow_cross_1(State1),
     yellow_cross_2(Final),
+    solve_step(successors, Initial, State1, Solution1),
+    solve_step(successors, State1, Final, Solution2),
+    append(Solution1, Solution2, Solution).
 
-    solve_step2(Initial, State1),
-    solve_step2(State1, Final).
-
-solve_yellow_corners(Initial, Final) :-
+solve_yellow_corners(Initial, Final, Solution) :-
     yellow_corners_1(State1),
     yellow_corners_2(Final),
+    solve_step(successors4yellow1, Initial, State1, Solution1),
+    solve_step(successors4yellow2, State1, Final, Solution2),
+    append(Solution1, Solution2, Solution).
 
-    solve_yellow2(successors4yellow, Initial, State1),
-    solve_yellow2(successors4yellow2, State1, Final).
-
-solve_yellow_edges(Initial, Final) :-
+solve_yellow_edges(Initial, Final, Solution) :-
     yellow_edges(Final),
+    solve_step(successors4yellow3, Initial, Final, Solution).
 
-    solve_yellow2(successors4yellow3, Initial, Final).
 
 % Human approach to solving the cube in stages
 solve_human(InitialName) :-
     const(InitialName, Initial),
-    solve_white_cross(Initial, State1),
-    solve_white_corners(State1, State2),
-    solve_middle_layer(State2, State3),
-    solve_yellow_cross(State3, State4),
-    solve_yellow_corners(State4, State5),
-    solve_yellow_edges(State5, Solved),
-    write("Final state: "), writeln(Solved).
+    solve_white_cross(Initial, State1, Solution1),
+    write("To make a white cross, do these moves: "), writeln(Solution1),
 
+    solve_white_corners(State1, State2, Solution2),
+    write("To make white corners, do these moves: "), writeln(Solution2),
 
+    solve_middle_layer(State2, State3, Solution3),
+    write("To make the middle layer, do these moves: "), writeln(Solution3),
 
+    solve_yellow_cross(State3, State4, Solution4),
+    write("To make a yellow cross, do these moves: "), writeln(Solution4),
+%TODO: pokud je list prazdny, bud nevzpsat vubec, nebo rict, ze uz to je hotove.
+    solve_yellow_corners(State4, State5, Solution5),
+    write("To make yellow corners, do these moves: "), writeln(Solution5),
 
+    solve_yellow_edges(State5, _, Solution6),
+    write("To make yellow edges, do these moves: "), writeln(Solution6),
 
-% solve_white_cross(InitialName) :-
-%     solve_step_name(InitialName, white_cross_1, State1),
-% % solve_white_cross(Initial) :-
-% %     solve_step2(Initial, white_cross_1(State1)),
-%     solve_step(State1, white_cross_2, State2),
-%     % white_cross_2(State2),
-%     % solve_step2(State1, State2),
-%     solve_step(State2, white_corners_1, State3),
-%     solve_step(State3, white_corners_2, State4),
-%     solve_step(State4, white_corners_3, State5),
-%     solve_step(State5, white_corners_4, State6),
-
-%     writeln(""), writeln("Now middle layer:"), writeln(""),
-%     solve_yellow(successors4middle, State6, middle_layer_2b, State13),
-%     solve_yellow(successors4middle, State13, middle_layer_4b, State14),
-
-%     % solve_step(State6, middle_layer_1a, State7),
-%     % solve_step(State7, middle_layer_1b, State8),
-%     % solve_step(State8, middle_layer_2a, State9),
-%     % solve_step(State9, middle_layer_2b, State10),
-%     % solve_step(State10, middle_layer_3a, State11),
-%     % solve_step(State11, middle_layer_3b, State12),
-%     % solve_step(State12, middle_layer_4a, State13),
-%     % solve_step(State13, middle_layer_4b, State14),
-
-%     writeln(""), writeln("Now yellow cross:"), writeln(""),
-%     solve_step(State14, yellow_cross_1, State15),
-%     solve_step(State15, yellow_cross_2, State16),
-
-%     writeln(""), writeln("Now yellow corners 1:"), writeln(""),
-%     solve_yellow(successors4yellow, State16, yellow_corners_1, State17),
-
-%     writeln(""), writeln("Now yellow corners 2:"), writeln(""),
-%     solve_yellow(successors4yellow2, State17, yellow_corners_2, State18),
-
-%     writeln(""), writeln("Now yellow edges:"), writeln(""),
-%     solve_yellow(successors4yellow3, State18, yellow_edges, Solved),
-
-%     write("Final state: "), writeln(Solved).
-
-%     % move(State16, State17, Moves),
-%     % write("Moves: "), writeln(Moves),
-
-
-
+    Temp = [Solution1, Solution2, Solution3, Solution4, Solution5, Solution6],
+    flatten(Temp, Solution),
+    
+    writeln("The cube is solved!"),
+    write("For the initial state: "), writeln(Initial),
+    write("Solution found: "), writeln(Solution).

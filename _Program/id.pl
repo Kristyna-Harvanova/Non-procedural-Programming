@@ -66,11 +66,12 @@ solve(InitialName) :-
 
 % Solve the cube
 find_moves_from_to(InitialName, FinalName) :-
-    writeln('Starting iterative deepening search...'),
     const(InitialName, Initial),    % Get the initial state by its const name defined in cube.pl
     const(FinalName, Final),          % Get the solved state (also defined in cube.pl)
-    iterative_deepening(successors, Initial, Final, Solution, _), 
+    writeln('Starting iterative deepening search...'),
+    iterative_deepening(successors, Initial, Final, Solution), 
     write("For the initial state: "), writeln(Initial),
+    write("To the final state: "), writeln(Final),
     write("Solution found: "), writeln(Solution).
     
     
