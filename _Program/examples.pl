@@ -42,6 +42,7 @@ const(in3, cube(
     o, o, g, o, o, w, w, b, w, 
     b, y, b, o, y, b, o, y, b)).
 
+
 % From the solved:  right, right, up, right'. (4 moves)
 % Result moves:     [Right,Up',Right,Right]
 const(in4, cube( 

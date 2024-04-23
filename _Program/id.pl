@@ -56,7 +56,7 @@ iterative_deepening(MovePred, Start, Goal, Solution) :-
 
 
 % Solve the cube
-solve(InitialName) :-
+solve_id(InitialName) :-
     const(InitialName, Initial),    % Get the initial state by its const name defined in examples.pl
     const(solved, Solved),          % Get the solved state (also defined in examples.pl)
     writeln('Starting iterative deepening search...'),
