@@ -266,13 +266,32 @@ instance Foldable Tree where
 -- Pomocí 'foldMap' implementujte:
 
 length' :: (Foldable t) => t a -> Int
-length' = undefined
+-- length' = undefined
+length' foldable = getSum $ foldMap (\_ -> Sum (1 :: Int)) foldable
+-- length' fold = getSum $ foldMap (Sum (1 :: Int)) fold
 
 sum' :: (Foldable t, Num a) => t a -> a
-sum' = undefined
+-- sum' = undefined
+sum' foldable = getSum $ foldMap Sum foldable
 
 product' :: (Foldable t, Num a) => t a -> a
-product' = undefined
+-- product' = undefined
+product' foldable = getProduct $ foldMap Product foldable
 
 toList' :: (Foldable t) => t a -> [a]
-toList' = undefined
+-- toList' = undefined
+toList' = foldMap (:[])
+
+-- class Func a where
+--     (.) :: a -> a -> a
+
+-- instance Semigroup (a -> a) where
+--     (<>) = (.)
+
+-- instance Monoid (a -> a) where
+--     mempty = id
+
+
+
+foldr' :: Foldable t => (a -> b -> b) -> b -> t a -> b
+foldr' f b foldable = foldMap (\x -> )
