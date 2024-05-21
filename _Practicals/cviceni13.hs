@@ -108,7 +108,6 @@ main = greet
 -- hint: readFile, lines/unlines, words/unwords
 -- bonus: zkusit si naprogramovat vlastni verzi withFile (nebudeme resit vyjimky)
 
-
 sumUp :: IO ()
 sumUp = do
     content <- readFile "_Practicals/numbers.txt"

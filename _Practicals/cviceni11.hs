@@ -1,4 +1,4 @@
--- 11. cvičení 2017-05-02
+-- 11. cvičení 2024-04-30
 --
 -- Pro připomenutí:
 --
@@ -134,6 +134,11 @@ data F a b = F (b a)
 
 -- > :k F
 -- F :: * -> (* -> *) -> *
+
+-- :k F
+-- F :: k -> (k -> *) -> *
+-- ghci> :k F Int Tree
+-- F Int Tree :: *
 --
 -- K čemu je tohle dobré? Typové třídy se dají definovat i pro typové
 -- konstruktory, tj. i pro věci, jejichž kind je různý od '*'.
@@ -266,32 +271,48 @@ instance Foldable Tree where
 -- Pomocí 'foldMap' implementujte:
 
 length' :: (Foldable t) => t a -> Int
--- length' = undefined
-length' foldable = getSum $ foldMap (\_ -> Sum (1 :: Int)) foldable
--- length' fold = getSum $ foldMap (Sum (1 :: Int)) fold
+length' = undefined
 
 sum' :: (Foldable t, Num a) => t a -> a
--- sum' = undefined
-sum' foldable = getSum $ foldMap Sum foldable
+sum' = undefined
 
 product' :: (Foldable t, Num a) => t a -> a
--- product' = undefined
-product' foldable = getProduct $ foldMap Product foldable
+product' = undefined
 
 toList' :: (Foldable t) => t a -> [a]
--- toList' = undefined
-toList' = foldMap (:[])
-
--- class Func a where
---     (.) :: a -> a -> a
-
--- instance Semigroup (a -> a) where
---     (<>) = (.)
-
--- instance Monoid (a -> a) where
---     mempty = id
+toList' = undefined
 
 
 
-foldr' :: Foldable t => (a -> b -> b) -> b -> t a -> b
-foldr' f b foldable = foldMap (\x -> )
+
+
+-- length' :: (Foldable t) => t a -> Int
+-- -- length' = undefined
+-- length' foldable = getSum $ foldMap (\_ -> Sum (1 :: Int)) foldable
+-- -- length' fold = getSum $ foldMap (Sum (1 :: Int)) fold
+
+-- sum' :: (Foldable t, Num a) => t a -> a
+-- -- sum' = undefined
+-- sum' foldable = getSum $ foldMap Sum foldable
+
+-- product' :: (Foldable t, Num a) => t a -> a
+-- -- product' = undefined
+-- product' foldable = getProduct $ foldMap Product foldable
+
+-- toList' :: (Foldable t) => t a -> [a]
+-- -- toList' = undefined
+-- toList' = foldMap (:[])
+
+-- -- class Func a where
+-- --     (.) :: a -> a -> a
+
+-- -- instance Semigroup (a -> a) where
+-- --     (<>) = (.)
+
+-- -- instance Monoid (a -> a) where
+-- --     mempty = id
+
+
+
+-- foldr' :: Foldable t => (a -> b -> b) -> b -> t a -> b
+-- foldr' f b foldable = foldMap (\x -> )
