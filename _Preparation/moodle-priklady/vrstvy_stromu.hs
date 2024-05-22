@@ -45,3 +45,30 @@ vrstvy g = let (l, g') = layer g in l:vrstvy g'
 -- spousteni
 -- vrstvy  (neighbors [('a','c'),('b','c'),('c','d'),('c','e'),('d','f'),('f','g'),('f','h'),('h','i')])
 -- ["abegi","ch","df"]
+
+
+-- import Data.List
+
+-- diff :: Ord a => [a] -> [a] -> [a]
+-- diff xs [] = xs
+-- diff [] _  = []
+-- diff (x:xs) (y:ys) = case compare x y of
+--     LT -> x:diff xs (y:ys)
+--     EQ -> diff xs ys
+--     GT -> diff (x:xs) ys
+
+-- sousedi :: Ord a => [(a, a)] -> [(a, [a])]
+-- sousedi = map (\v -> (fst $ head v, map snd v)) . groupBy (\e1 e2 -> fst e1 == fst e2) . sort . concatMap (\(x, y) -> [(x, y), (y, x)])
+
+-- split :: Ord a => [(a, [a])] -> ([a], [(a, [a])])
+-- split g = (leaves, map (\(v, e) -> (v, diff e leaves)) inner)  -- e \\ leaves
+--   where
+--     (outer, inner) = partition ((<= 1) . length . snd) g
+--     leaves = map fst outer
+
+-- layers :: Ord a => [(a, [a])] -> [[a]]
+-- layers [] = []
+-- layers g  = let (l, g') = split g in l:layers g'
+
+-- vrstvy :: Ord a => [(a, a)] -> [[a]]
+-- vrstvy = layers . sousedi

@@ -17,3 +17,19 @@
 -- [(0,0,'a'),(0,0,'n'),(1,1,'a'),(0,0,'_'),(2,2,'a'),(7,3,'$')]
 -- Ve vašem řešení můžete používat knihovní funkce z naší referenční příručky na Moodle.
 
+import Data.List
+import Data.Ord
+
+prekomprese :: String -> [(Int, Int, Char)]
+prekomprese = go ""
+  where
+    go _  [] = []
+    go ls rs = case rest of
+        []      -> error "prekomprese: internal error"
+        r:rest' -> (length ls - offset, len, r):go (ls ++ prefix ++ [r]) rest'
+      where
+        (offset, len)  = bestPrefix ls rs
+        (prefix, rest) = splitAt len rs
+
+    matchLen ls = length . takeWhile id . zipWith (==) ls
+    bestPrefix ls rs = maximumBy (comparing snd) . zip [0..] . map (matchLen rs) . tails $ ls
