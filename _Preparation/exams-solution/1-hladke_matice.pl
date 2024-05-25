@@ -75,3 +75,35 @@ hladka([Xs | Xss]) :-
     transpose([Xs | Xss], Yss),     
     hladke_radky_matice(Yss),       % vytvoreni hodnot ve vsech sloupcich matice z prvniho cisla tak, aby byly sloupce hladke
     hladke_radky_matice([Xs | Xss]).% test, jestli doplnene hodnoty do sloupcu sedi s podminkou hladkosti radku matice
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+:- use_module(library(clpfd)).
+
+test(X, Y) :-
+    between(-1,1,N),
+    (
+        nonvar(Y), var(X),
+        X is Y + N;
+        nonvar(X), var(Y),
+        Y is X + N;
+        nonvar(X), nonvar(Y),
+        Y is X + N,!
+    ).
+
+hladky([]).
+hladky([_]).
+hladky([X,Y|Xs]) :-
+    test(X,Y),
+    hladky([Y|Xs]).
+
+hladka(Xss) :-
+    hladka_(Xss),
+    transpose(Xss, XssT),
+    hladka_(XssT).
+
+hladka_([]).
+hladka_([R|Xss]) :-
+    hladky(R),
+    hladka(Xss).
