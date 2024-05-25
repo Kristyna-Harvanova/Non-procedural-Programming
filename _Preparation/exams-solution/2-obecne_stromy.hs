@@ -65,11 +65,7 @@ infiniteTree val = Node val [infiniteTree val]
 -- a poté funkci takeTree (s vhodnými parametry)? Bude to fungovat? Odpověď zdůvodněte.
 
 -- Řešení:
--- Pokud nejprve aplikujeme mapTree a poté takeTree na nekonečný strom, mapTree projde stromem a aplikuje funkci na každý uzel. 
--- Vzhledem k tomu, že strom je nekonečný, průchod by nikdy neskončil, pokud bychom ho nějak neomezili. 
--- Po aplikaci takeTree bychom dostali konečný strom s hloubkou h, kde každý uzel byl transformován funkcí mapTree. 
--- To funguje správně, protože takeTree omezuje hloubku a zajišťuje, že strom je konečný.
-
+-- bude fungovat diky lazy hodnoceni (treba jako take 5 [1..])
 
 
 
@@ -128,23 +124,3 @@ infiniteTree val = Node val [infiniteTree val]
 --         ]
 --     ]
 
-
-
-
-
--- -- type Mapa = [((Int, Int), [(Int, Int)])]
--- -- B)
--- type Mapa a = [((a, a), [(a, a)])]
--- -- C) a needs to be Ord bcs of comparison
--- zdroje :: Ord a => Mapa a -> [((a, a), (a, a))]
--- zdroje mapa = sorted
---     where
---         filtered = map (\((locX, locY), connected) -> ((locX, locY), filter (\(conX, conY) -> conX <= locX && conY <= locY)  connected)) mapa
---         sorted = map (\(loc, connected) -> (loc, minimumBy (\a b -> compare b a) connected)) filtered
-
--- -- D) added function for X comparison
--- zdroje' :: Ord a => Mapa a -> (a -> a -> Bool) -> [((a, a), (a, a))]
--- zdroje' mapa f = sorted
---     where
---         filtered = map (\((locX, locY), connected) -> ((locX, locY), filter (\(conX, conY) -> f locX conX && conY <= locY)  connected)) mapa
---         sorted = map (\(loc, connected) -> (loc, minimumBy (\a b -> compare b a) connected)) filtered
