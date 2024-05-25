@@ -78,32 +78,46 @@ hladka([Xs | Xss]) :-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% :- use_module(library(clpfd)).
 
-:- use_module(library(clpfd)).
+% test(X, Y) :-
+%     between(-1,1,N),
+%     (
+%         nonvar(Y), var(X),
+%         X is Y + N;
+%         nonvar(X), var(Y),
+%         Y is X + N;
+%         nonvar(X), nonvar(Y),
+%         Y is X + N,!
+%     ).
 
-test(X, Y) :-
-    between(-1,1,N),
-    (
-        nonvar(Y), var(X),
-        X is Y + N;
-        nonvar(X), var(Y),
-        Y is X + N;
-        nonvar(X), nonvar(Y),
-        Y is X + N,!
-    ).
 
-hladky([]).
-hladky([_]).
-hladky([X,Y|Xs]) :-
-    test(X,Y),
-    hladky([Y|Xs]).
+% find_num([], _) :- fail.
+% find_num([A|_], A) :- nonvar(A).
+% find_num([A|As], Num) :- var(A), find_num(As, Num).
 
-hladka(Xss) :-
-    hladka_(Xss),
-    transpose(Xss, XssT),
-    hladka_(XssT).
+% hladky(As) :-
+%     find_num(As, Num),
+%     length(As, Len),
+%     Min is Num - Len - 1,
+%     Max is Num + Len + 1,
+%     maplist(between(Min, Max), As),
+%     hladky_(As).
 
-hladka_([]).
-hladka_([R|Xss]) :-
-    hladky(R),
-    hladka(Xss).
+% hladky_([]).
+% hladky_([_]).
+% hladky_([X,Y|Xs]) :-
+%     test(X,Y),
+%     hladky_([Y|Xs]).
+
+% hladka([Xs|Xss]) :-
+%     hladky(Xs),
+%     transpose([Xs|Xss], XssT),
+%     hladka_(XssT),
+%     hladka_([Xs|Xss]).
+
+
+% hladka_([]).
+% hladka_([R|Xss]) :-
+%     hladky(R),
+%     hladka_(Xss).
