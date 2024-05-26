@@ -42,10 +42,11 @@
 -- na vhodné typové třídy. Půjde s takto změněnou typovou signaturou použít váš původní kód, 
 -- nebo budou potřebné nějaké změny? Odpověď prosím zdůvodněte.
 
-type Graf = [ (Int, [Int]) ]
+-- type Graf = [ (Int, [Int]) ]
 
-g :: Graf
-g = [
+-- g1 :: Graf 
+g1 :: Graf Int
+g1 = [
     (1, [3, 6]),
     (2, [6]),
     (3, [2, 5]),
@@ -53,8 +54,10 @@ g = [
     (5, [2, 4]),
     (6, [3, 4, 5])
     ]
+-- Just [1,3,2,6,5,4,1]
 
-g2 :: Graf
+-- g2 :: Graf 
+g2 :: Graf Int
 g2 = [
     (1, [2]),
     (2, [3]),
@@ -63,52 +66,62 @@ g2 = [
     (5, [6]),
     (6, [1])
     ]
+-- Just [1,2,3,4,5,6,1]
 
+-- g3 :: Graf
+g3 :: Graf Int
+g3 = [
+    (1, [2]),
+    (2, [3]),
+    (3, [4]),
+    (4, [5]),
+    (5, [1]),
+    (6, [1])
+    ]
+-- Nothing
 
-
--- hcHelp :: Graf -> [Int] -> Maybe [Int]
--- hcHelp graf cycle
---     | length cycle >= length graf = Just cycle
---     | length cycle == 0 =
---         let ((vertex, _):rest) = graf
---         in hcHelp graf [vertex]
---     | otherwise =           -- length cycle > 0 = 
---         let (vertex, (n1:neighbours)) = head (filter (\(x, _) -> x == last cycle) graf)
---         in if any (\x -> x == n1) neighbours then Nothing
---            else hcHelp graf (cycle++[n1])
-
-
-
-
-
-
-
-replaceNeighbours :: Graf -> Int -> [Int] -> Graf
+-- pomocna funkce k aktualizaci sousedu v grafu
+-- replaceNeighbours :: Graf -> Int -> [Int] -> Graf
+replaceNeighbours :: (Eq a) => Graf a -> a -> [a] -> Graf a
 replaceNeighbours ((v, ns):graf) vertex newNeighbours 
-    | v == vertex = ((v, newNeighbours):graf)
-    | otherwise = (v, ns):(replaceNeighbours graf vertex newNeighbours)
+    | v == vertex = ((v, newNeighbours):graf)   -- pokud jsme nasli vrchol, jehoz sousedy chceme nahradit, vratime aktualizovany
+    | otherwise = (v, ns):(replaceNeighbours graf vertex newNeighbours) -- vratime seznam zkontrolovaneho neaktualizovaneho vrcholu a rekurzivni volani funkce na zbytku
 
--- nefunguje:
-
-hcHelp :: Graf -> [Int] -> Maybe [Int]
-hcHelp ((v, ns):graf) cycle
-    | length cycle >= length ((v, ns):graf) = Just cycle    -- vratime cyklus
-    | length cycle == 0 = hcHelp ((v, ns):graf) [v]         -- pridani prvniho prvku do mozneho cyklu
+-- pomocna rekurzivni funkce pro hc
+-- hcHelp :: Graf -> [Int] -> Maybe [Int]
+hcHelp :: (Eq a) => Graf a -> [a] -> Maybe [a]
+hcHelp graf cycle
+    | length cycle >= length graf =
+        if (elem (head cycle) (snd (head (filter (\(x, _) -> x == last cycle) graf))))  -- kontrola, jestli posledni prvek cyklu ma za souseda prvni prvek cyklu
+            then Just (cycle ++ [head cycle])                                           -- pridame prvni prvek na konec, aby byl cyklus (nebo muzeme vratit jen cycle samotne)
+        else Nothing                                                                    -- nejde o Hamiltonovsky cyklus, protoze posledni prvek nenavazuje na prvni
+    | length cycle == 0 = hcHelp graf [fst (head graf)]                                 -- pridani prvniho prvku do mozneho cyklu
     | otherwise =                               
-        let (lastVertex, (n1:neighbours)) = head (filter (\(x, _) -> x == last cycle) ((v, ns):graf))   -- vybereme posledni pridany vrchol a jeho souseda, ktereho chceme pridat do cyklu
-        in if any (\x -> x == n1) cycle then                -- pokud uz soused v cyklu je, zkusime pridat dalsiho souseda
-            if length neighbours == 0 then Nothing          -- pokud uz to byl posledni soused, koncime, neni cesta.
-            else
-                let newGraph2 = replaceNeighbours ((v, ns):graf) lastVertex neighbours
-                in hcHelp newGraph2 (cycle)                 -- jinak aktualizujeme sousedy a zkousime znovu
-           else                                             -- pokud soused v cyklu neni, pridame ho do cyklu a volame znovu na aktualizovanem grafu
-            let newGraph = replaceNeighbours ((v, ns):graf) lastVertex neighbours
-            in hcHelp newGraph (cycle++[n1])
-            
+        let (lastVertex, (neighbours)) = head (filter (\(x, _) -> x == last cycle) graf)   -- vybereme posledni pridany vrchol a jeho souseda, ktereho chceme pridat do cyklu
+            tryNext [] = Nothing                                                        -- pokud uz nejsou zadni sousede k dospozici, backtracking
+            tryNext (n1:ns) 
+                | elem n1 cycle = tryNext ns    -- pokud uz soused v cyklu je, zkousime s dalsim sousedem
+                | otherwise = 
+                    let newGraph2 = replaceNeighbours graf lastVertex (filter (/= n1) neighbours)   -- aktualizujeme sousedy
+                    in case hcHelp newGraph2 (cycle ++ [n1]) of
+                        Nothing -> tryNext ns   -- zkousime jineho souseda, pokud tato cesta nefungovala
+                        solution -> solution
+        in tryNext neighbours
 
+-- a)
 -- hc :: Graf -> Maybe [Int]
--- hc ((vertex, (n1:neighbours)):graf) = 
+-- hc graf = hcHelp graf []
 
+-- b)
+type Graf a = [ (a, [a]) ]
+
+-- c)
+hc :: (Eq a) => Graf a -> Maybe [a]
+hc graf = hcHelp graf []
+
+-- Je treba omezit na Eq, protoze pouzivame Minimální definice:  (==) nebo (/=).
+-- v samotnem kodu zmeny potrebne nejsou, je vsak treba zmenit typovou signaturu i u vsech dalsich nadefinovanych 
+-- pomocnuch funkci.
 
 
 
